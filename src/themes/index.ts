@@ -26,6 +26,14 @@ export default {
         XL2: 32,
     },
 
+    LINE_HEIGHT: {
+        SM: 14 * 1.3,
+        MD: 16 * 1.3,
+        LG: 18 * 1.3,
+        XL: 24 * 1.3,
+        XL2: 32 * 1.3,
+    },
+
     FONT_FAMILY: {
         REGULAR: "NunitoSans_400Regular",
         BOLD: "NunitoSans_700Bold",
