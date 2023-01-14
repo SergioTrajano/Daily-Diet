@@ -7,23 +7,24 @@ type Props = ViewProps & {
     porcentage: number;
     iconPosition: "RIGHT" | "LEFT";
     icon: keyof typeof Feather.glyphMap;
+    onClick: () => void;
 };
 
-export function Status({ type, porcentage, iconPosition, icon, ...rest }: Props) {
+export function Status({ type, porcentage, iconPosition, icon, onClick, ...rest }: Props) {
     return (
         <S.Container
             type={type}
             {...rest}
         >
             {iconPosition === "RIGHT" ? (
-                <S.IconButtonRight>
+                <S.IconButtonRight onPress={() => onClick()}>
                     <S.Icon
                         type={type}
                         name={icon}
                     />
                 </S.IconButtonRight>
             ) : (
-                <S.IconButtonLeft>
+                <S.IconButtonLeft onPress={() => onClick()}>
                     <S.Icon
                         type={type}
                         name={icon}
