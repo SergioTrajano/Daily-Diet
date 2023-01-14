@@ -6,7 +6,7 @@ import { MotivationalMessage } from "@screens/MotivationalMessage";
 import { NewMeal } from "@screens/NewMeal";
 import { Statistics } from "@screens/Statistics";
 
-const { Navigator, Screen } = createNativeStackNavigator();
+const { Navigator, Screen } = createNativeStackNavigator<ReactNavigation.RootParamsList>();
 
 export function AppRoutes() {
     return (
