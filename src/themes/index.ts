@@ -19,6 +19,7 @@ export default {
     },
 
     FONT_SIZE: {
+        XS: 12,
         SM: 14,
         MD: 16,
         LG: 18,
@@ -27,6 +28,7 @@ export default {
     },
 
     LINE_HEIGHT: {
+        XS: 12 * 1.3,
         SM: 14 * 1.3,
         MD: 16 * 1.3,
         LG: 18 * 1.3,
