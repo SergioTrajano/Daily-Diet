@@ -5,7 +5,22 @@ type Props = {
     isInDiet: boolean;
 };
 
-export const Container = styled.TouchableOpacity`
+export const Container = styled.View`
+    flex: 1;
+
+    margin-top: 32px;
+`;
+
+export const Title = styled.Text`
+    ${({ theme }) => css`
+        font-family: ${theme.FONT_FAMILY.BOLD};
+        font-size: ${theme.FONT_SIZE.LG}px;
+        color: ${theme.COLOURS.GRAY_100};
+        line-height: ${theme.LINE_HEIGHT.LG}px;
+    `}
+`;
+
+export const MealInfoWrapper = styled.TouchableOpacity`
     flex: 1;
     flex-direction: row;
     min-height: 49px;
