@@ -19,7 +19,7 @@ export function Button({ title, type = "PRIMARRY", icon, ...rest }: Props) {
                 name={icon}
                 type={type}
             />
-            <ButtonText>{title}</ButtonText>
+            <ButtonText type={type}>{title}</ButtonText>
         </Container>
     );
 }

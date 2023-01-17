@@ -1,6 +1,5 @@
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, Text } from "react-native";
 import { Feather } from "@expo/vector-icons";
-
 import styled, { css } from "styled-components/native";
 
 export type ButtonTypeStyleProps = "PRIMARRY" | "SECONDARY";
@@ -10,23 +9,27 @@ type Props = {
 };
 
 export const Container = styled(TouchableOpacity)<Props>`
-    flex: 1;
+    width: 100%;
     min-height: 50px;
     max-height: 50px;
 
-    background-color: ${({ theme }) => theme.COLOURS.GRAY_200};
+    background-color: ${({ theme, type }) =>
+        type === "PRIMARRY" ? theme.COLOURS.GRAY_200 : theme.COLOURS.WHITE};
+
     border-radius: 6px;
+    border: ${({ type, theme }) =>
+        type === "SECONDARY" ? `1px solid ${theme.COLOURS.GRAY_100}` : "none"};
 
     flex-direction: row;
     justify-content: center;
     align-items: center;
 `;
 
-export const ButtonText = styled.Text`
-    ${({ theme }) => css`
+export const ButtonText = styled(Text)<Props>`
+    ${({ type, theme }) => css`
         font-size: ${theme.FONT_SIZE.SM}px;
         font-family: ${theme.FONT_FAMILY.BOLD};
-        color: ${theme.COLOURS.WHITE};
+        color: ${type === "PRIMARRY" ? theme.COLOURS.WHITE : theme.COLOURS.GRAY_100};
     `}
 `;
 
