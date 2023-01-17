@@ -26,7 +26,7 @@ export const MealInfoWrapper = styled.TouchableOpacity`
     min-height: 49px;
     max-height: 49px;
 
-    background-color: ${({ theme }) => theme.COLOURS.GRAY_500};
+    background-color: ${({ theme }) => theme.COLOURS.GRAY_600};
 
     border-radius: 6px;
     padding: 0 12px;
