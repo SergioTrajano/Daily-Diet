@@ -2,7 +2,9 @@ export declare global {
     namespace ReactNavigation {
         type RootParamsList = {
             home: undefined;
-            newMeal: undefined;
+            newMeal: {
+                mealId?: number;
+            };
             motivationalMessage: {
                 isInDiet: boolean;
             };

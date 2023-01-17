@@ -20,7 +20,7 @@ type Props = {
 type mealProps = {
     id: number;
     hour: string;
-    meal: string;
+    name: string;
     isInDiet: boolean;
 };
 
@@ -35,7 +35,7 @@ export function MealCard({ title, data, ...rest }: Props) {
         <Container>
             <FlatList
                 data={data}
-                keyExtractor={(item: mealProps, i: number) => `${item} + ${i}`}
+                keyExtractor={(item: mealProps) => `${item.id}`}
                 renderItem={({ item }: { item: mealProps }) => (
                     <MealInfoWrapper
                         onPress={() => handleMeal(item.id)}
@@ -43,7 +43,7 @@ export function MealCard({ title, data, ...rest }: Props) {
                     >
                         <HourText>{item.hour}</HourText>
                         <TextDivider></TextDivider>
-                        <MealText>{item.meal}</MealText>
+                        <MealText>{item.name}</MealText>
                         <Circle isInDiet={item.isInDiet} />
                     </MealInfoWrapper>
                 )}
