@@ -86,12 +86,15 @@ export function Statistics() {
     return (
         <>
             <Loading style={{ display: isLoading ? "flex" : "none" }} />
-            <Container style={{ display: isLoading ? "none" : "flex" }}>
+            <Container
+                style={{ display: isLoading ? "none" : "flex" }}
+                type={(mealsInDiet / mealsNumber) * 100 >= 70 ? "PRIMARY" : "SECONDARY"}
+            >
                 <Status
                     icon="arrow-left"
                     iconPosition="LEFT"
                     porcentage={(mealsInDiet / mealsNumber) * 100}
-                    type="PRIMARY"
+                    type={(mealsInDiet / mealsNumber) * 100 >= 70 ? "PRIMARY" : "SECONDARY"}
                     onClick={() => navigate("home")}
                 />
 

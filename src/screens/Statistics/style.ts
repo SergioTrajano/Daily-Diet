@@ -10,9 +10,15 @@ type StatsProps = {
     type: StatsTypeColor;
 };
 
-export const Container = styled(SafeAreaView)`
+type ContainerProps = {
+    type: StatsTypeColor;
+};
+
+export const Container = styled(SafeAreaView)<ContainerProps>`
     flex: 1;
-    background-color: ${({ theme }) => theme.COLOURS.GREEN_LIGHT};
+
+    background-color: ${({ theme, type }) =>
+        type === "PRIMARY" ? theme.COLOURS.GREEN_LIGHT : theme.COLOURS.RED_LIGHT};
 `;
 
 export const StatisticsContainer = styled.View`
