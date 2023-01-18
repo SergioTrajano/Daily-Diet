@@ -31,7 +31,7 @@ export function Status({ type, porcentage, iconPosition, icon, onClick, ...rest 
                     />
                 </S.IconButtonLeft>
             )}
-            <S.PorcentageText>{porcentage}%</S.PorcentageText>
+            <S.PorcentageText>{porcentage.toFixed(2)}%</S.PorcentageText>
             <S.StatusMessage>das refeições dentro da dieta</S.StatusMessage>
         </S.Container>
     );
