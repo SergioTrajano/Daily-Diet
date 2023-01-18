@@ -22,6 +22,7 @@ import {
     Options,
     Circle,
 } from "./style";
+import { Loading } from "@components/Loading";
 
 type RouteParams = {
     mealId?: number;
@@ -30,7 +31,8 @@ type RouteParams = {
 export function NewMeal() {
     const { COLOURS } = useTheme();
     const { params } = useRoute();
-    const { navigate } = useNavigation<NativeStackNavigationProp<ReactNavigation.RootParamsList>>();
+    const { navigate, goBack } =
+        useNavigation<NativeStackNavigationProp<ReactNavigation.RootParamsList>>();
     const { mealId } = params as RouteParams;
 
     const dateRef = useRef<TextInput>(null);
@@ -48,6 +50,7 @@ export function NewMeal() {
 
     const [isInDietButtonSelected, setIsInDietButtonSelected] = useState<boolean>(false);
     const [notDietButtonSelected, setNotDietButtonSelected] = useState<boolean>(false);
+    const [isLoading, setIsloading] = useState<boolean>();
 
     function isBorderBlack(isFocused: boolean, inputValue: string) {
         if (isFocused && inputValue !== "") return true;
@@ -122,26 +125,47 @@ export function NewMeal() {
             return navigate("meal", { mealId });
         }
 
-        await mealCreate(mealData);
+        try {
+            await mealCreate(mealData);
 
-        navigate("motivationalMessage", { isInDiet });
+            navigate("motivationalMessage", { isInDiet });
+        } catch (error) {
+            console.log(error);
+
+            Alert.alert("Erro", "Não foi possível salvar as informações. Tente novamente.");
+        }
     }
 
     async function fetchMealById() {
-        const storedMeal = mealId ? await mealGetById(mealId) : undefined;
+        setIsloading(true);
 
-        if (storedMeal === undefined) return;
+        try {
+            const storedMeal = mealId ? await mealGetById(mealId) : undefined;
 
-        setName(storedMeal.name);
-        setDescription(storedMeal.description);
-        setDate(storedMeal.date);
-        setHour(storedMeal.hour);
+            if (storedMeal === undefined) return;
 
-        if (storedMeal.isInDiet) {
-            return handleInDiet();
+            setName(storedMeal.name);
+            setDescription(storedMeal.description);
+            setDate(storedMeal.date);
+            setHour(storedMeal.hour);
+
+            if (storedMeal.isInDiet === true) {
+                return handleInDiet();
+            } else {
+                handleNotInDiet();
+            }
+
+            setIsloading(false);
+        } catch (error) {
+            console.log(error);
+
+            Alert.alert(
+                "Erro",
+                "Houve algum erro e não foi possível carregar os dados. Tente novamente!"
+            );
+
+            goBack();
         }
-
-        handleNotInDiet();
     }
 
     useFocusEffect(
@@ -151,127 +175,130 @@ export function NewMeal() {
     );
 
     return (
-        <Container>
-            <Header
-                text={mealId ? "Nova refeição" : "Editar Refeição"}
-                type="TERTIARY"
-            />
-
-            <FormContainer>
-                <View style={{ height: 430 }}>
-                    <InputContainer size="SMALL">
-                        <Label>Nome</Label>
-                        <InputField
-                            size="SMALL"
-                            value={name}
-                            onChangeText={(text) => setName(text)}
-                            onFocus={() => setIsNameFocused(true)}
-                            onBlur={() => setIsNameFocused(false)}
-                            style={
-                                isBorderBlack(isNameFocused, name.trim())
-                                    ? { borderColor: COLOURS.GRAY_500 }
-                                    : { borderColor: COLOURS.GRAY_300 }
-                            }
-                        />
-                    </InputContainer>
-
-                    <InputContainer size="LARGE">
-                        <Label>Descrição</Label>
-                        <InputField
-                            size="SMALL"
-                            multiline={true}
-                            textAlignVertical="top"
-                            value={description}
-                            onChangeText={(text) => setDescription(text)}
-                            onFocus={() => setIsDescriptionFocused(true)}
-                            onBlur={() => setIsDescriptionFocused(false)}
-                            style={
-                                isBorderBlack(isDescriptionFocused, description.trim())
-                                    ? { borderColor: COLOURS.GRAY_500 }
-                                    : { borderColor: COLOURS.GRAY_300 }
-                            }
-                        />
-                    </InputContainer>
-
-                    <InRowWrapper>
-                        <TimeInputWrapper>
-                            <InputContainer size="SMALL">
-                                <Label>Data</Label>
-                                <InputField
-                                    size="SMALL"
-                                    keyboardType="numeric"
-                                    value={date}
-                                    onChangeText={(text) => formatDate(text)}
-                                    ref={dateRef}
-                                    onFocus={() => setIsDateFocused(true)}
-                                    onBlur={() => setIsDateFocused(false)}
-                                    style={
-                                        isBorderBlack(isDateFocused, date.trim())
-                                            ? { borderColor: COLOURS.GRAY_500 }
-                                            : { borderColor: COLOURS.GRAY_300 }
-                                    }
-                                    placeholder="dd/mm/yyyy"
-                                    placeholderTextColor={themes.COLOURS.GRAY_500}
-                                />
-                            </InputContainer>
-                        </TimeInputWrapper>
-
-                        <TimeInputWrapper>
-                            <InputContainer size="SMALL">
-                                <Label>Hora</Label>
-                                <InputField
-                                    size="SMALL"
-                                    keyboardType="numeric"
-                                    value={hour}
-                                    onChangeText={(text) => formatHour(text)}
-                                    ref={hourRef}
-                                    onFocus={() => setIsHourFocused(true)}
-                                    onBlur={() => setIsHourFocused(false)}
-                                    style={
-                                        isBorderBlack(isHourFocused, hour.trim())
-                                            ? { borderColor: COLOURS.GRAY_500 }
-                                            : { borderColor: COLOURS.GRAY_300 }
-                                    }
-                                    placeholder="hh/mm"
-                                    placeholderTextColor={themes.COLOURS.GRAY_500}
-                                />
-                            </InputContainer>
-                        </TimeInputWrapper>
-                    </InRowWrapper>
-
-                    <Label>Está dentro da dieta?</Label>
-                    <InRowWrapper>
-                        <Options
-                            onPress={() => handleInDiet()}
-                            style={
-                                isInDietButtonSelected
-                                    ? { backgroundColor: themes.COLOURS.GREEN_LIGHT }
-                                    : { backgroundColor: themes.COLOURS.GRAY_500 }
-                            }
-                        >
-                            <Circle type="PRIMARY"></Circle>
-                            <Label style={{ marginTop: 5 }}>Sim</Label>
-                        </Options>
-
-                        <Options
-                            onPress={() => handleNotInDiet()}
-                            style={
-                                notDietButtonSelected
-                                    ? { backgroundColor: themes.COLOURS.RED_LIGHT }
-                                    : { backgroundColor: themes.COLOURS.GRAY_500 }
-                            }
-                        >
-                            <Circle type="SECONDARY"></Circle>
-                            <Label style={{ marginTop: 5 }}>Não</Label>
-                        </Options>
-                    </InRowWrapper>
-                </View>
-
-                <Button
-                    title={mealId ? "Salvar alterações" : "Cadastrar refeição"}
-                    onPress={() => submit()}
+        <>
+            <Loading style={{ display: isLoading ? "flex" : "none" }} />
+            <Container style={{ display: isLoading ? "none" : "flex" }}>
+                <Header
+                    text={mealId ? "Nova refeição" : "Editar Refeição"}
+                    type="TERTIARY"
                 />
-            </FormContainer>
-        </Container>
+
+                <FormContainer>
+                    <View style={{ height: 430 }}>
+                        <InputContainer size="SMALL">
+                            <Label>Nome</Label>
+                            <InputField
+                                size="SMALL"
+                                value={name}
+                                onChangeText={(text) => setName(text)}
+                                onFocus={() => setIsNameFocused(true)}
+                                onBlur={() => setIsNameFocused(false)}
+                                style={
+                                    isBorderBlack(isNameFocused, name.trim())
+                                        ? { borderColor: COLOURS.GRAY_500 }
+                                        : { borderColor: COLOURS.GRAY_300 }
+                                }
+                            />
+                        </InputContainer>
+
+                        <InputContainer size="LARGE">
+                            <Label>Descrição</Label>
+                            <InputField
+                                size="SMALL"
+                                multiline={true}
+                                textAlignVertical="top"
+                                value={description}
+                                onChangeText={(text) => setDescription(text)}
+                                onFocus={() => setIsDescriptionFocused(true)}
+                                onBlur={() => setIsDescriptionFocused(false)}
+                                style={
+                                    isBorderBlack(isDescriptionFocused, description.trim())
+                                        ? { borderColor: COLOURS.GRAY_500 }
+                                        : { borderColor: COLOURS.GRAY_300 }
+                                }
+                            />
+                        </InputContainer>
+
+                        <InRowWrapper>
+                            <TimeInputWrapper>
+                                <InputContainer size="SMALL">
+                                    <Label>Data</Label>
+                                    <InputField
+                                        size="SMALL"
+                                        keyboardType="numeric"
+                                        value={date}
+                                        onChangeText={(text) => formatDate(text)}
+                                        ref={dateRef}
+                                        onFocus={() => setIsDateFocused(true)}
+                                        onBlur={() => setIsDateFocused(false)}
+                                        style={
+                                            isBorderBlack(isDateFocused, date.trim())
+                                                ? { borderColor: COLOURS.GRAY_500 }
+                                                : { borderColor: COLOURS.GRAY_300 }
+                                        }
+                                        placeholder="dd/mm/yyyy"
+                                        placeholderTextColor={themes.COLOURS.GRAY_500}
+                                    />
+                                </InputContainer>
+                            </TimeInputWrapper>
+
+                            <TimeInputWrapper>
+                                <InputContainer size="SMALL">
+                                    <Label>Hora</Label>
+                                    <InputField
+                                        size="SMALL"
+                                        keyboardType="numeric"
+                                        value={hour}
+                                        onChangeText={(text) => formatHour(text)}
+                                        ref={hourRef}
+                                        onFocus={() => setIsHourFocused(true)}
+                                        onBlur={() => setIsHourFocused(false)}
+                                        style={
+                                            isBorderBlack(isHourFocused, hour.trim())
+                                                ? { borderColor: COLOURS.GRAY_500 }
+                                                : { borderColor: COLOURS.GRAY_300 }
+                                        }
+                                        placeholder="hh/mm"
+                                        placeholderTextColor={themes.COLOURS.GRAY_500}
+                                    />
+                                </InputContainer>
+                            </TimeInputWrapper>
+                        </InRowWrapper>
+
+                        <Label>Está dentro da dieta?</Label>
+                        <InRowWrapper>
+                            <Options
+                                onPress={() => handleInDiet()}
+                                style={
+                                    isInDietButtonSelected
+                                        ? { backgroundColor: themes.COLOURS.GREEN_LIGHT }
+                                        : { backgroundColor: themes.COLOURS.GRAY_500 }
+                                }
+                            >
+                                <Circle type="PRIMARY"></Circle>
+                                <Label style={{ marginTop: 5 }}>Sim</Label>
+                            </Options>
+
+                            <Options
+                                onPress={() => handleNotInDiet()}
+                                style={
+                                    notDietButtonSelected
+                                        ? { backgroundColor: themes.COLOURS.RED_LIGHT }
+                                        : { backgroundColor: themes.COLOURS.GRAY_500 }
+                                }
+                            >
+                                <Circle type="SECONDARY"></Circle>
+                                <Label style={{ marginTop: 5 }}>Não</Label>
+                            </Options>
+                        </InRowWrapper>
+                    </View>
+
+                    <Button
+                        title={mealId ? "Salvar alterações" : "Cadastrar refeição"}
+                        onPress={() => submit()}
+                    />
+                </FormContainer>
+            </Container>
+        </>
     );
 }
