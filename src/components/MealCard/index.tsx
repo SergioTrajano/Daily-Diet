@@ -1,4 +1,4 @@
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -49,6 +49,9 @@ export function MealCard({ title, data, ...rest }: Props) {
                 )}
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={() => <Title>{title}</Title>}
+                ItemSeparatorComponent={() => (
+                    <View style={{ width: 10, height: 1, backgroundColor: "#FFFFFF" }}></View>
+                )}
             />
         </Container>
     );
