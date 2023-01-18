@@ -50,7 +50,7 @@ export function NewMeal() {
 
     const [isInDietButtonSelected, setIsInDietButtonSelected] = useState<boolean>(false);
     const [notDietButtonSelected, setNotDietButtonSelected] = useState<boolean>(false);
-    const [isLoading, setIsloading] = useState<boolean>();
+    const [isLoading, setIsloading] = useState<boolean>(false);
 
     function isBorderBlack(isFocused: boolean, inputValue: string) {
         if (isFocused && inputValue !== "") return true;
@@ -150,12 +150,10 @@ export function NewMeal() {
             setHour(storedMeal.hour);
 
             if (storedMeal.isInDiet === true) {
-                return handleInDiet();
+                handleInDiet();
             } else {
                 handleNotInDiet();
             }
-
-            setIsloading(false);
         } catch (error) {
             console.log(error);
 
@@ -165,6 +163,8 @@ export function NewMeal() {
             );
 
             goBack();
+        } finally {
+            setIsloading(false);
         }
     }
 
