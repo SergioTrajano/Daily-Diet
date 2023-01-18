@@ -50,8 +50,8 @@ export const IconButtonRight = styled(TouchableOpacity)`
 
 export const IconButtonLeft = styled(TouchableOpacity)`
     position: absolute;
-    top: 3px;
-    left: 3px;
+    top: 10px;
+    left: 24px;
 `;
 
 export const Icon = styled(Feather).attrs<Props>(({ theme, type }) => ({
