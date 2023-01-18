@@ -19,12 +19,13 @@ import {
 import { Header } from "@components/Header";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { useEffect, useState } from "react";
 import { mealGetById } from "@storage/meals/mealGetById";
 import { Button } from "@components/Button";
 
 import { mealRemove } from "@storage/meals/mealRemove";
+import { Loading } from "@components/Loading";
 
 type RouteParams = {
     mealId: number;
@@ -41,6 +42,7 @@ export function Meal() {
     const [isInDiet, setIsInDiet] = useState<boolean | undefined>(false);
 
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const { navigate } = useNavigation<NativeStackNavigationProp<ReactNavigation.RootParamsList>>();
 
@@ -55,10 +57,16 @@ export function Meal() {
             navigate("home");
         } catch (error) {
             console.log(error);
+
+            Alert.alert("Erro", "Não foi possível fazer a remoção. Tente novamente.");
+
+            setIsModalVisible(false);
         }
     }
 
     async function fetchMeal() {
+        setIsLoading(true);
+
         try {
             const meal = await mealGetById(mealId);
 
@@ -67,10 +75,14 @@ export function Meal() {
             setDate(meal?.date);
             setHour(meal?.hour);
             setIsInDiet(meal?.isInDiet);
+
+            setIsLoading(false);
         } catch (error) {
             console.log(error);
 
-            throw error;
+            Alert.alert("Erro no carregamento", "Houve um erro no carregamento das informações.");
+
+            navigate("home");
         }
     }
 
@@ -103,7 +115,10 @@ export function Meal() {
                     </ModalButtonsContainer>
                 </Modal>
             </ModalContainer>
-            <Container>
+
+            <Loading style={{ display: isLoading ? "flex" : "none" }} />
+
+            <Container style={{ display: isLoading ? "none" : "flex" }}>
                 <Header
                     type="PRIMARY"
                     text="Refeição"
